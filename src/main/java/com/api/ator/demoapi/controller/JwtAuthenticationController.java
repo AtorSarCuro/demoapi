@@ -5,6 +5,8 @@ import com.api.ator.demoapi.model.JwtRequest;
 import com.api.ator.demoapi.model.JwtResponse;
 import com.api.ator.demoapi.model.UsuarioDto;
 import com.api.ator.demoapi.service.JwtUserDetailsService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin
 public class JwtAuthenticationController {
+
+    private static final Log logger = LogFactory.getLog(JwtAuthenticationController.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -37,7 +41,7 @@ public class JwtAuthenticationController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<?> saveUser(@RequestBody UsuarioDto user) throws Exception {
+    public ResponseEntity<?> saveUser(@RequestBody UsuarioDto user) {
         return ResponseEntity.ok(userDetailsService.save(user));
     }
 
@@ -45,8 +49,10 @@ public class JwtAuthenticationController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
+            logger.error("USER_DISABLED", e);
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
+            logger.error("INVALID_CREDENTIALS", e);
             throw new Exception("INVALID_CREDENTIALS", e);
         }
     }

@@ -2,7 +2,6 @@ package com.api.ator.demoapi.model;
 
 public class UsuarioDto {
 
-
     private String name;
     private String email;
     private String password;
